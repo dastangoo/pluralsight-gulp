@@ -1,32 +1,31 @@
 var gulp = require('gulp');
+var args = require('yargs').argv;
+var config = require('./gulp.config')();
+ 
+var $ = require('gulp-load-plugins')({lazy: true});
 
-// gulp.task('js', ['jscs', 'jshint'], function() {
-//   return gulp
-//       .src('./src/**/*.js', {base: './src/'})
-//       .pipe(concat('all.js'))
-//       .pipe(uglify())
-//       .pipe(gulp.dst('./build/'));
-// })
-//
-// gulp.task('min2', function() {
-//     return gulp
-//         .src('./src/**/*.js')
-//         .pipe(uglify())
-//         .pipe(gulp.dst('./build/'));
-// }
-// gulp.task('lint-watcher', function() {
-//     gulp.watch('./src/**/*.js', [
-//         'jshint',
-//         'jscs'
-//     ]);
-// });
-// gulp.task('lint-watcher', function() {
-//     gulp.watch('./src/**/*.less', function(event) {
-//         console.log('watched event ' + event.type +
-//                     ' for ' + event.path);
-//     })
-// });
+gulp.task('vet', function() {
+		log('Analyzing source with JSHint and JSCS');
 
-gulp.task('hello-world', function() {
-  console.log('Our first gulp task!');
+		return gulp
+			.src(config.alljs)
+		.pipe($.if(args.verbose, $.print()))
+		.pipe($.jscs())
+		.pipe($.jshint())
+		.pipe($.jshint.reporter('jshint-stylish', {verbose: true}))
+		.pipe($.jshint.reporter('fail'));
 });
+
+/////////////////
+
+function log(msg) {
+	if (typeof(msg) === 'object') {
+		for (var item in msg) {
+			if (msg.hasOwnProperty(item)) {
+				$.util.log($.util.colors.blue(msg[item]));
+			}
+		}
+	}	else {
+		$.util.log($.util.colors.blue(msg));
+	}
+}
