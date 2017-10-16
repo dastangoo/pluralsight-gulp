@@ -42,7 +42,7 @@ gulp.task('clean-styles', function() {
 gulp.task('wiredep', function() {
 	log('Wire up the bower css js and our app into the html');
 	var options = config.getWiredepDefaultOptions();
-	var wiredep = require('wiredep').stream; 
+	var wiredep = require('wiredep').stream;
 	return gulp
 		.src(config.index)
 		.pipe(wiredep(options))
@@ -58,6 +58,34 @@ gulp.task('inject', ['wiredep', 'styles'], function() {
 		.pipe(gulp.dest(config.client))
 });
 
+gulp.task('serve-dev', ['inject'], function() {
+		var isDev = true;
+		var port = config.defaultPort;
+
+		var nodeOptions = {
+			script: config.nodeServer, //TODO app.js
+			delayTime: 1,
+			env: {
+				'PORT': port,
+				'NODE_ENV': isDev ? 'dev' : 'build'
+			},
+			watch: [config.server] // TODO: define the files to restart on
+		};
+		return $.nodemon(nodeOptions)
+			.on('restart', function(ev) {
+				log('*** nodemon restarted');
+				log('files changed on restart:\n' + ev);
+			})
+			.on('start', function() {
+				log('*** nodemon started');
+			})
+			.on('crash', function() {
+				log('*** nodemon crashed: script crashed for some reason');
+			})
+			.on('exit', function() {
+				log('*** nodemon exited cleanly');
+			});
+})
 /////////////////
 
 function clean(path) {
