@@ -12,8 +12,11 @@ module.exports = function() {
       './src/**/*.js',
       './*.js'
     ],
+    build: './build/', // ./dist or ./production or ./prod
     client: client,
     css: temp + 'styles.css',
+    fonts: './bower_components/font-awesome/fonts/**/*.*',
+    images: client + 'images/**/*.*',
     index: client + 'index.html',
     js: [
       clientApp + '**/*.module.js',
