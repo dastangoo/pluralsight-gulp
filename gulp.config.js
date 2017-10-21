@@ -24,6 +24,10 @@ module.exports = function() {
     server: server,
     temp: temp,
 
+    /*
+    * brower sync
+    */
+    browserReloadDelay: 1000,
     /**
     * Bower and NPM locaitons
     */
